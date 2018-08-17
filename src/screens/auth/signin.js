@@ -51,7 +51,7 @@ const Inputer = ({placeholder, value, isSecure, onChange, icon})=>(
     </View>
   </View>
 )
-
+//https://exp-shell-app-assets.s3.us-west-1.amazonaws.com/android/%40skyclean/athleticoin-a45895a769158d6f84acaaff97580f91-signed.apk
 export default class Signin extends PureComponent{
     constructor(props){
         super(props)
