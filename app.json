@@ -1,0 +1,18 @@
+{
+  "expo": {
+        "name": "ATHA",
+        "version": "1.0.0",
+        "slug": "athleticoin",
+        "description": "voting",
+        "sdkVersion": "27.0.0",
+        "orientation": "portrait",
+        "privacy": "public",
+        "icon": "./app.png",
+        "android": {
+          "package": "com.athleticoin.voting"
+        },
+        "ios": {
+            "bundleIdentifier": "com.athleticoin.voting"
+        }
+    }
+}
