@@ -26,7 +26,7 @@ import * as commonStyles from '../../styles/commonStyles'
 import { LinearGradient } from "expo";
 
 const Inputer = ({placeholder, value, onChange})=>(
-    <TextInput 
+    <TextInput
         placeholder={placeholder}
         placeholderTextColor={commonColors.placeholder}
         autoCapitalize="none"
@@ -38,7 +38,7 @@ const Inputer = ({placeholder, value, onChange})=>(
             paddingHorizontal:15,
             height:36,
             width:'100%',
-            fontSize:13, 
+            fontSize:13,
             backgroundColor:'white',
             borderRadius:5,
             marginTop:10
@@ -72,7 +72,7 @@ export default class Buy extends PureComponent{
             ],
         }
     }
-    
+
     updateBalance(){
        if (Cache.currentUser){
         API.getEthBalance(Cache.currentUser.id, (error, res) => {
@@ -91,7 +91,7 @@ export default class Buy extends PureComponent{
       } else {
         Alert.alert('none current user');
       }
-      
+
       API.getSellingRequest(Cache.currentUser.id, (err, res)=>{
         if (err == null){
           this.setState({selling_requests:res.res});
@@ -100,13 +100,13 @@ export default class Buy extends PureComponent{
         }
       });
     }
-    
+
     componentDidMount(){
       this.updateBalance();
       //setInterval(()=>this.updateBalance(), 10000);
     }
-    
-    Sort(type){      
+
+    Sort(type){
       let listitems = this.state.selling_requests;
       if (type == 1){
         listitems.sort(function(a, b){return a.price - b.price});
@@ -123,7 +123,7 @@ export default class Buy extends PureComponent{
                 colors={[commonColors.color1, commonColors.color2, commonColors.color3]}
                 start={[0.0, 0.0]}
                 end={[1.0, 0.0]}
-                style={{ height: 120, width: '100%' }} 
+                style={{ height: 120, width: '100%' }}
               >
                 <View style={{flexDirection:'row', marginTop:40, marginLeft:15}}>
                   <Ionicons name="ios-menu" size={24} color={'white'} onPress={()=>Actions.pop()} />
@@ -154,7 +154,10 @@ export default class Buy extends PureComponent{
                       <Text style={{fontSize:12, color:commonColors.theme, width:50, textAlign:'center'}}>Max</Text>
                     </TouchableOpacity>
                   </View>
-                  <ScrollView style={{marginTop:8}} showsVerticalScrollIndicator={false}>
+                  <View style={{flexDirection:'row',height:20, paddingTop:5}}>
+                    <Text style={{fontSize:10, color:'white', flex:1}}>Note: You will not see your own Marketplace Listings</Text>
+                  </View>
+                  <ScrollView style={{marginTop:0}} showsVerticalScrollIndicator={false}>
                     <ShowItemList items={this.state.selling_requests} onPress={(item, index)=>{Actions.Confirm({item})}}/>
                   </ScrollView>
                 </View>

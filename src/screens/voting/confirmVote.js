@@ -11,7 +11,7 @@ import {
     ImageBackground,
     TouchableWithoutFeedback,
     Keyboard,
-    Alert,    
+    Alert,
 } from 'react-native'
 
 import { Actions } from 'react-native-router-flux';
@@ -41,7 +41,7 @@ export default class LiveEvent extends PureComponent{
         }
     }
 
-    
+
     componentDidMount(){
       if (Cache.currentUser){
           let from_fan = Cache.currentUser.name;
@@ -53,17 +53,22 @@ export default class LiveEvent extends PureComponent{
         Alert.alert('none current user');
       }
     }
-    
+
     Confirm(){
       API.submitVote(Cache.currentUser.id, this.props.item.part.id, this.state.event.id, this.state.amount, (err, res) => {
         if (err == null){
-          Alert.alert('success submitted!')
+          Alert.alert('Vote Submitted!',
+          'Your Wallet Balance will change soon. Please be patient!',
+          [
+              {text: 'OK', onPress: () => Actions.Main()},
+          ],
+          { cancelable: false });
         } else {
-          Alert.alert(err);          
+          Alert.alert(err);
         }
       });
     }
-    
+
     render(){
         return(
           <TouchableWithoutFeedback onPress={()=>Keyboard.dismiss()}>
@@ -90,15 +95,15 @@ export default class LiveEvent extends PureComponent{
                   <View style={{flexDirection:'row', alignItems:'center', height:50, backgroundColor:'rgb(205,241,255)', paddingHorizontal:20}}>
                     <Text style={{color:'grey', flex:1, fontSize:15}}>From</Text>
                     <Text style={{color:'black', fontSize:15}}>{this.state.from_fan}</Text>
-                  </View> 
+                  </View>
                   <View style={{flexDirection:'row', alignItems:'center', height:50, backgroundColor:'rgb(205,241,255)', paddingHorizontal:20}}>
                     <Text style={{color:'grey', flex:1, fontSize:15}}>Total</Text>
                     <Text style={{color:'black', fontSize:15}}>{this.state.amount}</Text>
-                  </View>  
+                  </View>
                   <View style={{flexDirection:'row', alignItems:'center', height:50, backgroundColor:'rgb(205,241,255)', paddingHorizontal:20}}>
                     <Text style={{color:'grey', flex:1, fontSize:15}}>Note</Text>
                     <Text style={{color:'black', fontSize:15}}>{this.state.event.event_name}</Text>
-                  </View>                    
+                  </View>
                 </View>
                 <View style={{flexDirection:'row', height:50, marginTop:20, width:'100%'}}>
                   <TouchableOpacity onPress={()=>Actions.pop()} style={{borderRadius:3, backgroundColor:'rgb(224, 224, 224)', alignItems:'center', justifyContent:'center', flex:1}}>

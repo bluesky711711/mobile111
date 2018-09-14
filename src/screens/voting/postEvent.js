@@ -117,7 +117,7 @@ export default class PostEvent extends PureComponent{
         Actions.Describe();
     }
 
-    ConfirmVote(){      
+    ConfirmVote(){
       if (this.state.amount > 0){
         if (this.state.amount > this.atha_balance){
           Alert.alert('Your  wallet  does  not  contain  enough  ATHA for  this  vote.  Please  visit  the  marketplace  to  buy  ATHA  or  transfer  more  ATHA  to  your  wallet  and  return  to  place  this  vote.');
@@ -142,7 +142,7 @@ export default class PostEvent extends PureComponent{
                 style={{ height: 120, width: '100%' }}
               >
                 <View style={{flexDirection:'row', marginTop:40, marginLeft:15}}>
-                  <Ionicons name="ios-arrow-back" size={24} color={'white'} onPress={()=>Actions.pop()} />
+                  <Ionicons name="ios-arrow-back" size={28} color={'white'} onPress={()=>Actions.pop()} />
                   <Text style={{fontSize:20, color:'white',marginLeft:15}}>ATHA Fan Voting Event</Text>
                 </View>
                 <TouchableOpacity onPress={()=>this.goDescribe()} style={{width:'100%'}}>

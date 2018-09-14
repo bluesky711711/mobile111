@@ -12,7 +12,8 @@ import {
     TouchableWithoutFeedback,
     Keyboard,
     Image,
-    Alert
+    Alert,
+    Clipboard
 } from 'react-native'
 
 import { Actions } from 'react-native-router-flux';
@@ -51,9 +52,10 @@ export default class RedeemInfo extends PureComponent{
         super(props)
         this.state={
           amount: this.props.item.amount,
-          title: this.props.item.title,   
+          title: this.props.item.title,
           redeem_code: this.props.item.redeem_code,
-          redeem_date: this.props.item.redeem_date,
+          redeem_date: this.props.item.updated_at,
+          award_date:this.props.item.redeem_date,
           eth_balance:0,
           eth_usd_price:0,
           fee: 0,
@@ -61,15 +63,24 @@ export default class RedeemInfo extends PureComponent{
     }
 
     updateBalance(){
-      if (this.state.redeem_date.includes('T')){
+      if (this.state.redeem_date && this.state.redeem_date.includes('T')){
         let date = this.state.redeem_date.split('T')[0];
         this.setState({redeem_date:date});
+      }
+      if (this.state.award_date && this.state.award_date.includes('T')){
+        let date = this.state.award_date.split('T')[0];
+        this.setState({award_date:date});
       }
     }
 
     componentDidMount(){
       this.updateBalance();
       //setInterval(()=>this.updateBalance(), 10000);
+    }
+
+    copyRedeem(redeemcode){
+      Clipboard.setString(redeemcode);
+      Alert.alert('Redeem code copied to clipboard!');
     }
 
     render(){
@@ -90,15 +101,23 @@ export default class RedeemInfo extends PureComponent{
                 <View style={{margin:30, flex:1, marginTop:50}}>
                   <View style={{backgroundColor:'white',height:50, justifyContent:'center', marginTop:15, borderRadius:5}}>
                     <Text style={{fontSize:16, color:commonColors.theme, marginLeft:10}}>REDEEM TITLE: {this.state.title}</Text>
-                  </View>  
-                  <View style={{backgroundColor:'white',height:50, justifyContent:'center', marginTop:15, borderRadius:5}}>
-                    <Text style={{fontSize:16, color:commonColors.theme, marginLeft:10}}>REDEEM AMOUNT: {this.state.amount} ATHA</Text>
-                  </View>                
-                  <View style={{backgroundColor:'white',height:50, justifyContent:'center', marginTop:15, borderRadius:5}}>
-                    <Text style={{fontSize:16, color:commonColors.theme, marginLeft:10}}>REDEEM CODE: {this.state.redeem_code}</Text>
                   </View>
                   <View style={{backgroundColor:'white',height:50, justifyContent:'center', marginTop:15, borderRadius:5}}>
-                    <Text style={{fontSize:16, color:commonColors.theme, marginLeft:10}}>REDEEM DATE: {this.state.redeem_date}</Text>
+                    <Text style={{fontSize:16, color:commonColors.theme, marginLeft:10}}>REDEEM AMOUNT: {this.state.amount} ATHA</Text>
+                  </View>
+                  <TouchableOpacity onPress={() => this.copyRedeem(this.state.redeem_code)} style={{backgroundColor:'white',height:50, flexDirection:'column', justifyContent:'center', marginTop:15, borderRadius:5}}>
+                    <View style={{flex:1}}>
+                      <Text style={{fontSize:14, flex:1, color:commonColors.theme, marginLeft:10}}>REDEEM CODE: {this.state.redeem_code}</Text>
+                    </View>
+                    <View style={{flex:1, paddingVertical:0, marginVertical:0}}>
+                      <Text style={{fontSize:10, flex:1, textAlign:'center', addingVertical:0, marginVertical:0, color:'#f00', marginLeft:10}}>Copy RedeemCode to Clipboard!</Text>
+                    </View>
+                  </TouchableOpacity>
+                  <View style={{backgroundColor:'white',height:50, justifyContent:'center', marginTop:15, borderRadius:5}}>
+                    <Text style={{fontSize:16, color:commonColors.theme, marginLeft:10}}>AWARD DATE: {this.state.award_date}</Text>
+                  </View>
+                  <View style={{backgroundColor:'white',height:50, justifyContent:'center', marginTop:15, borderRadius:5}}>
+                    <Text style={{fontSize:16, color:commonColors.theme, marginLeft:10}}>REDEEMED DATE: {this.state.redeem_date}</Text>
                   </View>
                 </View>
               </ImageBackground>

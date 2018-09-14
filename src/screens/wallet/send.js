@@ -26,7 +26,7 @@ import { LinearGradient } from "expo";
 
 const Inputer = ({placeholder, value, onChange, icon, isButton, onPress})=>(
     <View style={{flexDirection:'row', marginTop:15,}}>
-      <TextInput 
+      <TextInput
           placeholder={placeholder}
           placeholderTextColor={commonColors.placeholder}
           autoCapitalize="none"
@@ -38,7 +38,7 @@ const Inputer = ({placeholder, value, onChange, icon, isButton, onPress})=>(
               paddingHorizontal:15,
               height:40,
               width:'100%',
-              fontSize:14, 
+              fontSize:14,
               backgroundColor:'white',
               borderRadius:5,
           }}
@@ -58,20 +58,20 @@ export default class Send extends PureComponent{
             type:1,
         }
     }
-    
+
     getQRCode(qrcode){
-      this.setState({to_address:qrcode});
+      this.setState({to_address:qrcode.data});
     }
-    
+
     Send(){
        if (Cache.currentUser){
-        API.getGas(Cache.currentUser.id, (err1, res) => {
-          if (err1 == null){
+        API.getGas(Cache.currentUser.id, (err, res) => {
+          if (err == null){
             let gasfee = parseFloat(res.gasdata.gasfee);
             let balance = this.props.Balance.ETH;
             if (balance > gasfee + this.state.amount){
               if (this.props.coinType == "ETH"){
-                API.sendETH(Cache.currentUser.id, this.state.to_address, this.state.amount, (err2, res1) => {
+                API.sendEth(Cache.currentUser.id, this.state.to_address, this.state.amount, (err2, res1) => {
                   if (err2 == null){
                     Alert.alert('ETH successfully sent!');
                   } else {
@@ -91,12 +91,12 @@ export default class Send extends PureComponent{
               Alert.alert('Sufficient Balance!');
             }
           } else {
-            Alert.alert('failed gas fee');
+            Alert.alert(err.toString());
           }
         });
        }
     }
-    
+
     render(){
         return(
             <View style={styles.container}>
@@ -114,11 +114,11 @@ export default class Send extends PureComponent{
                       end={[1.0, 0.0]}
                       style={{ height: 44, width: '100%', alignItems: 'center', justifyContent: 'center', borderRadius: 5 }}
                     >
-                    <TouchableOpacity onPress={()=>this.Send()}>  
+                    <TouchableOpacity onPress={()=>this.Send()}>
                       <Text style={{ color: '#fff', backgroundColor: 'transparent' }}>
                         Send Now
                       </Text>
-                    </TouchableOpacity>  
+                    </TouchableOpacity>
                     </LinearGradient>
                   </View>
               </View>

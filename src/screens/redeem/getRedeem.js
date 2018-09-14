@@ -149,7 +149,7 @@ export default class GetRedeem extends PureComponent{
              this.setState({showModal: true, alertText:'You have claimed your Athleticoin! Please check below for your wallet details.'});
              setTimeout(()=>this.updateBalance(), 2000);
            } else {
-             this.setState({showModal: true, alertText:'This code has been redeemed or is no longer valid.'});             
+             this.setState({showModal: true, alertText:error});             
            }
          });
       } else {

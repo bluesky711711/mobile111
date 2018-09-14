@@ -40,7 +40,7 @@ export default class Received extends PureComponent{
         setTimeout(()=>this.setState({address:Cache.currentUser.wallet_address}), 10);
       }
     }
-    
+
     copyToClipboard(){
       Clipboard.setString(this.state.address);
       Alert.alert("Wallet address copied!");
@@ -52,12 +52,12 @@ export default class Received extends PureComponent{
                   <View style={{alignItems:'center', paddingHorizontal:20, marginTop:10}}>
                     <View style={{marginTop:15}}>
                       <QRCode
-                        value={this.state.text}
+                        value={this.state.address}
                         size={160}
                         bgColor='black'
                         fgColor='white'/>
                     </View>
-                    
+
                       <View style={{marginTop:10}}>
                         <TouchableOpacity onPress={()=>this.copyToClipboard()}>
                           <Text style={{color:'blue', fontSize:14, marginTop:10}}>Copy Address to ClipBoard</Text>

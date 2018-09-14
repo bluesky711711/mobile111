@@ -51,7 +51,7 @@ const ShowItemList = ({items, onPress})=>(
       return (
         <TouchableOpacity activeOpacity={0.8} onPress={()=>onPress(item, index)} style={{flexDirection:'row', height:34, marginTop:8, borderRadius:10, backgroundColor:commonColors.lightTheme, paddingHorizontal:10, alignItems:'center'}}>
             <Ionicons name="ios-arrow-back" size={20} color={'grey'}/>
-            <Text style={{fontSize:13, color:'#333', flex:1, marginLeft:15}}>{item.event.sport} | {item.league} | {item.first_name}</Text>
+            <Text style={{fontSize:13, color:'#333', flex:1, marginLeft:15}}>{item.event.sport} | {item.league} | {item.PartDisplay}</Text>
             {item.StartDate && <Text style={{fontSize:11, color:'#333'}}>{item.StartDate.split('T')[0]}</Text>}
         </TouchableOpacity>
       )

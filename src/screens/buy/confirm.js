@@ -96,12 +96,12 @@ export default class Confirm extends PureComponent{
 
     Confirm(){
       if (this.state.price > this.state.eth_balance)  {
-        Alert.alert('No Sufficient ETH Balance!');
+        Alert.alert('You need more ETH for this transaction!');
         return;
       }
       API.setBuyingRequest(Cache.currentUser.id, this.props.item.id, (err, res) => {
         if (err == null){
-          Alert.alert('Your purchase is complete!');
+          Alert.alert('Success', 'Your Wallet Balance will change soon. Please be patient');
           setTimeout(()=>Actions.Main(), 3000);
         } else {
           Alert.alert(err);

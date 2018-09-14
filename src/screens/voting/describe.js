@@ -105,7 +105,7 @@ export default class LiveEvent extends PureComponent{
                     Once an event is closed for voting, 1 winning athlete and 1 winning fan is selected.
                     The winning athlete is the athlete with the most ATHA votes sent to them.
                     The winning fan is the fan that sent the most ATHA votes during the event.
-                    If there is a tie in either category, the total ATHA will be splite equally.
+                    If there is a tie in either category, the total ATHA will be split equally.
                   </Text>
                 </View>
                 <View style={{backgroundColor:'rgba(155, 205, 255, 0.3)', borderRadius:10, padding: 20, margin:10}}>

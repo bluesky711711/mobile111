@@ -26,7 +26,7 @@ export default class Received extends PureComponent{
     constructor(props){
         super(props)
         this.state={
-            type:0, 
+            type:0,
             ethRev:[
             ],
             ethSnd:[
@@ -38,11 +38,11 @@ export default class Received extends PureComponent{
             user_id: 0
         }
     }
-    
+
     pad(n) {
         return (n < 10 ? '0' : '') + n;
     }
-    
+
     updateData(){
       if (Cache.currentUser){
         API.getEthTransactions(Cache.currentUser.id, (err, res)=>{
@@ -73,23 +73,25 @@ export default class Received extends PureComponent{
                   time_str = time_str + seconds + ' secs ';
                 }
                 time_str = time_str + ' ago';
-                
+
                 if (res.transactions[i].from.toUpperCase() == Cache.currentUser.wallet_address.toUpperCase()){
                   eth_sends.push({title:'Sent', price:res.transactions[i]["value"], date:time_str});
                 } else if (res.transactions[i].to.toUpperCase() == Cache.currentUser.wallet_address.toUpperCase()){
-                  eth_revs.push({title:'Received', price:res.transactions[i]["value"], date:time_str});  
+                  eth_revs.push({title:'Received', price:res.transactions[i]["value"], date:time_str});
                 }
             }
             this.setState({ethRev:eth_revs, ethSnd:eth_sends});
           }
         });
-        
-        API.getEventLogs(Cache.currentUser.id, 'receive',  (err, res)=>{
+
+        API.getEventLogs(Cache.currentUser.id, 'receive',  (err, res) => {
           if (err == null){
+            let atha_revs = [];
+            if (res.events.length > 0){
             for (let i in res.events){
-                let atha_revs = [];
+
                 let now = new Date().getTime() / 1000;
-                let seconds_left = now - res.events[i]["timestamp"];
+                let seconds_left = now - res.events[i].timestamp;
                 let days = this.pad(parseInt(seconds_left / 86400));
                 seconds_left = seconds_left % 86400;
 
@@ -111,17 +113,18 @@ export default class Received extends PureComponent{
                   time_str = time_str + seconds + ' secs';
                 }
                 time_str = time_str + ' ago';
-              
-                atha_revs.push({title:'Received', price:res.events[i]["_value"], date:time_str});  
-                this.setState({athaRev:atha_revs});
+
+                atha_revs.push({title:'Received', price:res.events[i]._value, date:time_str});
+            }
+            this.setState({athaRev:atha_revs});
             }
           }
         });
-        
+
         API.getEventLogs(Cache.currentUser.id, 'send',  (err, res)=>{
           if (err == null){
+            let atha_sends = [];
             for (let i in res.events){
-                let atha_sends = [];
                 let now = new Date().getTime() / 1000;
                 let seconds_left = now - res.events[i]["timestamp"];
                 let days = this.pad(parseInt(seconds_left / 86400));
@@ -145,17 +148,16 @@ export default class Received extends PureComponent{
                   time_str = time_str + seconds + ' secs';
                 }
                 time_str = time_str + ' ago';
-                
-              
+
+
                 atha_sends.push({title:'Sent', price:res.events[i]["_value"], date:time_str});
-              
-                this.setState({athaSnd:atha_sends});
             }
+            this.setState({athaSnd:atha_sends});
           }
-        });        
+        });
       }
     }
-    
+
     componentDidMount(){
       setTimeout(()=>{
         this.setState({user_id:Cache.currentUser.id});
@@ -163,7 +165,7 @@ export default class Received extends PureComponent{
       }, 10);
       //setInterval(()=>this.updateData(), 10000);
     }
-    
+
     render(){
         let items = this.state.type==0?(this.props.coinType=='ETH'?this.state.ethRev:this.state.athaRev):(this.props.coinType=='ETH'?this.state.ethSnd:this.state.athaSnd)
         return(

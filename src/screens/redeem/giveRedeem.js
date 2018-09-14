@@ -61,7 +61,7 @@ const ShowItemList = ({items, onPress, copy})=>(
               <View style={{flexDirection:'row', width:'100%'}}>
                 <Text style={{fontSize:13, color:'#333', flex:1}}>{item.title}</Text>
                 <TouchableOpacity onPress={()=>copy(item.redeem_code)}>
-                    <Text style={{fontSize:11, color:'#63a5fd'}}>Copy RedeemCode</Text>
+                    <Text style={{fontSize:13, color:'#63a5fd'}}>Copy RedeemCode</Text>
                 </TouchableOpacity>
               </View>
               <View style={{flexDirection:'row', width:'100%'}}>
@@ -89,8 +89,10 @@ export default class GiveRedeem extends PureComponent{
             type:0,
             redeemList:[],
             eth_amount: '0',
+            eth_amount_show: '0',
             submitting: false,
-            showModal: false
+            showModal: false,
+            gasfee: 0,
         }
         this.amount_list=[
           {label:'100', value:'100'},
@@ -102,7 +104,7 @@ export default class GiveRedeem extends PureComponent{
           {label:'50000', value:'50000'},
         ]
     }
-    
+
   renderModal() {
     return (
     <Modal
@@ -116,7 +118,7 @@ export default class GiveRedeem extends PureComponent{
             <Text style={{fontSize:15, color:'grey',margin:10, textAlign:'center'}}>{this.state.alertText}</Text>
           </View>
           <View style={{height:36, flexDirection:'row', width:'100%', borderBottomRightRadius:5, borderBottomLeftRadius:5, overflow:'hidden', borderTopWidth:1, borderTopColor:'#ccc'}}>
-            <TouchableOpacity onPress={()=>this.setState({showModal:false})} style={{flex:1, alignItems:'center', justifyContent:'center', backgroundColor:'rgb(249,249,249)'}}>
+            <TouchableOpacity onPress={()=>{this.setState({showModal:false});Actions.Main()}} style={{flex:1, alignItems:'center', justifyContent:'center', backgroundColor:'rgb(249,249,249)'}}>
               <Text style={{color:commonColors.theme, fontSize:13}}>OK</Text>
             </TouchableOpacity>
           </View>
@@ -132,8 +134,8 @@ export default class GiveRedeem extends PureComponent{
             let atha_balance = parseFloat(res.balance.replace(',', ''));
              API.getEthPrice((error, res) => {
               let price_usd = res[0].price_usd;
-              let usd_value = price_usd * atha_balance * 0.00000160;
-              let min_usd_price = price_usd * 0.00000160;
+              let usd_value = price_usd * atha_balance * 0.00000153;
+              let min_usd_price = price_usd * 0.00000153;
               this.setState({atha_usd_amount:usd_value.toFixed(4), eth_usd_unit:price_usd});
             })
             this.setState({atha_balance:atha_balance.toFixed(8)});
@@ -162,6 +164,12 @@ export default class GiveRedeem extends PureComponent{
            Alert.alert(error);
          }
         });
+        API.getGas(Cache.currentUser.id, (error, res) => {
+          if (error == null){
+            let gasfee = parseFloat(res.gasdata.gasfee);
+            this.setState({gasfee:gasfee});
+          }
+        });
       } else {
         Alert.alert('none current user');
       }
@@ -173,6 +181,7 @@ export default class GiveRedeem extends PureComponent{
     }
 
     submit(){
+
       if (this.state.submitting == true) return;
 
       this.state.submitting = true;
@@ -187,28 +196,22 @@ export default class GiveRedeem extends PureComponent{
           return;
       }
       if (Cache.currentUser){
-        API.getGas(Cache.currentUser.id, (error, res) => {
-          if (error == null){
-            let gasfee = parseFloat(res.gasdata.gasfee);
-            let eth_amount = gasfee + this.state.eth_amount;
-            if (eth_amount > this.state.eth_balance) {
-              Alert.alert('You have not enough Balance for this transaction');
-              return;
-            }
-            API.give_redeem(Cache.currentUser.id, this.state.award_amount, this.state.eth_amount, this.state.award_title, this.state.award_description, (err, res)=>{
-              if (err == null){
-                // Alert.alert('Redeem  Code  Created.  Please  visit  History  Tab  to  copy  and  send  the  code.');                
-                this.setState({showModal: true, alertText:'Redeem  Code  Created.  Please  visit  History  Tab  to  copy  and  send  the  code.'})
-                this.state.submitting = false;
-                setTimeout(()=>this.updateBalance(), 1000);
-              } else {
-                this.state.submitting = false;
-                Alert.alert(err);
-              }
-            });
+        let eth_amount = this.state.eth_amount_show;
+        if (eth_amount > this.state.eth_balance) {
+          Alert.alert('You need more ETH to process this transaction.');
+          return;
+        }
+
+        API.give_redeem(Cache.currentUser.id, this.state.award_amount, this.state.eth_amount, this.state.award_title, this.state.award_description, (err, res)=>{
+          if (err == null){
+            // Alert.alert('Redeem  Code  Created.  Please  visit  History  Tab  to  copy  and  send  the  code.');
+            this.setState({showModal: true, alertText:'Redeem  Code  Created.  Please  visit  History  Tab  to  copy  and  send  the  code.  \
+            Your Wallet Balance will change soon. Please be patient!'});
+            this.state.submitting = false;
+            setTimeout(()=>this.updateBalance(), 1000);
           } else {
             this.state.submitting = false;
-            Alert.alert('cannot calc gas fee now, try it later!');
+            Alert.alert(err);
           }
         });
       } else {
@@ -225,13 +228,15 @@ export default class GiveRedeem extends PureComponent{
         rest_value = value * 102 / 100 - this.state.atha_balance;
         eth_amount = rest_value * 0.00000153;
       }
+      eth_amount_show = eth_amount + this.state.gasfee * 8.34;
+      eth_amount_show = eth_amount_show.toFixed(8);
       //Alert.alert(eth_amount.toString());
       this.setState({
         award_amount: value,
-        eth_amount:eth_amount.toString()
+        eth_amount:eth_amount.toString(),
+        eth_amount_show: eth_amount_show.toString()
       });
     }
-
     copy(address){
       Clipboard.setString(address)
       Alert.alert('Redeem code copied to clipboard!');
@@ -283,7 +288,7 @@ export default class GiveRedeem extends PureComponent{
                     }}
                     style={{ ...pickerSelectStyles }}
                 />
-              <Inputer placeholder="ETH Amount Required" editable={false}  value={this.state.eth_amount} onChange={(eth_amount)=>this.setState({eth_amount})}/>
+              <Inputer placeholder="ETH Amount Required" editable={false}  value={this.state.eth_amount_show}/>
                 <View style={{marginTop:10, justifyContent:'center', marginHorizontal:20, width:'100%'}}>
                     <TouchableOpacity onPress={()=>this.submit()}>
                     <LinearGradient
@@ -327,7 +332,7 @@ const styles = StyleSheet.create({
   },
   modal: {
     width: 250,
-    height:130,
+    height:160,
     borderRadius: 5,
     alignItems: "center",
     justifyContent: "center",

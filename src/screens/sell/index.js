@@ -124,7 +124,7 @@ export default class Sell extends PureComponent{
           if (error == null){
             let gasfee = parseFloat(res.gasdata.gasfee);
             if (gasfee > this.state.eth_balance) {
-              Alert.alert('You need more ETH for this transaction. Please add ETH to your wallet then try again.');
+              Alert.alert('You need more ETH for this transaction.');
               return;
             }
             API.setSellingRequest(Cache.currentUser.id, this.state.amount, this.state.minETH, (err, res) => {
